@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1178.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="cn.edu.thu.disim4j.MainController">
+  <children>
+    <MenuBar prefHeight="25.0" prefWidth="900.0" VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="New" />
+            <MenuItem mnemonicParsing="false" text="Open…" />
+            <Menu mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" text="Save" />
+            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem mnemonicParsing="false" text="Revert" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Undo" />
+            <MenuItem mnemonicParsing="false" text="Redo" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Cut" />
+            <MenuItem mnemonicParsing="false" text="Copy" />
+            <MenuItem mnemonicParsing="false" text="Paste" />
+            <MenuItem mnemonicParsing="false" text="Delete" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Select All" />
+            <MenuItem mnemonicParsing="false" text="Unselect All" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <SplitPane dividerPositions="0.1096938775510204" focusTraversable="true" prefHeight="719.0" prefWidth="1231.0" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane prefHeight="720.0" prefWidth="274.0">
+          <children>
+            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="基础元素" textAlignment="CENTER" wrapText="false">
+              <font>
+                <Font size="18.0" fx:id="x1" />
+              </font>
+              <textFill>
+                <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
+              </textFill>
+            </Label>
+                  <Accordion layoutY="463.0" prefHeight="257.0" prefWidth="110.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="463.0">
+                    <panes>
+                      <TitledPane animated="false" prefHeight="267.0" prefWidth="110.0" text="运行">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="108.0">
+                                 <children>
+                                    <Button fx:id="startButton" disable="true" layoutX="-4.0" layoutY="41.0" mnemonicParsing="false" onAction="#initCPN" prefHeight="26.0" prefWidth="116.0" text="启动" />
+                                    <Pane layoutY="183.0" prefHeight="95.0" prefWidth="114.0" />
+                                    <Button fx:id="resetButton" disable="true" layoutX="-3.0" layoutY="76.0" mnemonicParsing="false" onAction="#nextStep" prefHeight="26.0" prefWidth="116.0" text="重置" />
+                                    <Button fx:id="compileButton" layoutY="7.0" mnemonicParsing="false" onAction="#loadCPN" prefHeight="26.0" prefWidth="116.0" text="编译" />
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" prefHeight="236.0" prefWidth="110.0" text="插件">
+                           <content>
+                              <VBox fx:id="pluginMainPane" prefHeight="200.0" prefWidth="100.0" />
+                           </content>
+                      </TitledPane>
+                    </panes>
+                  </Accordion>
+                  <Circle fx:id="leftPlace" fill="WHITE" layoutX="58.0" layoutY="81.0" radius="25.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Rectangle fx:id="leftRect" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="48.0" layoutX="31.0" layoutY="117.0" stroke="BLACK" strokeType="INSIDE" width="55.0" />
+                  <Line fx:id="leftLine" endX="40.0" layoutX="40.0" layoutY="190.0" />
+          </children>
+        </AnchorPane>
+        <ScrollPane fx:id="scrolPane" fitToHeight="true" fitToWidth="true" style="-fx-background-color: #FFFFFF;">
+               <content>
+                  <Pane fx:id="paintPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="720.0" prefWidth="1032.0" style="-fx-background-color: #FFFFFF;" />
+               </content>
+        </ScrollPane>
+      </items>
+    </SplitPane>
+    <HBox id="HBox" alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="900.0" spacing="5.0" VBox.vgrow="NEVER">
+      <children>
+        <Label fx:id="noticeLabel" maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" textFill="#ff00fa" HBox.hgrow="ALWAYS">
+          <font>
+            <Font size="11.0" fx:id="x3" />
+          </font>
+        </Label>
+        <Pane prefHeight="29.0" prefWidth="1112.0" HBox.hgrow="ALWAYS">
+               <children>
+              <Label font="$x3" layoutX="918.0" maxWidth="-1.0" text="Right status" />
+                  <Button fx:id="addHButton" layoutX="1071.0" layoutY="-4.0" mnemonicParsing="false" prefHeight="1.0" prefWidth="41.0" text="+H" />
+                  <Button fx:id="addVButton" layoutX="1030.0" layoutY="-4.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="41.0" text="+V" />
+               </children></Pane>
+      </children>
+      <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+      </padding>
+    </HBox>
+  </children>
+</VBox>

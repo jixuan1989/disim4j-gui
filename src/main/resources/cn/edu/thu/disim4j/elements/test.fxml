@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<fx:root type="javafx.scene.layout.HBox" 
+	xmlns:fx="http://javafx.com/fxml/1"
+	alignment="CENTER_LEFT">
+	<children>
+		<Button text="Button" onAction="#changeLabel" />
+		<Label fx:id="label" text="Basic Button" />
+		<HBox fx:id="extension" alignment="CENTER_LEFT"/>
+	</children>
+</fx:root>

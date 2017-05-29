@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.shape.*?>
+
+
+<Group fx:id="group" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.edu.thu.disim4j.elements.PlaceController">
+   <children>
+      <Circle fx:id="placeCircle" fill="WHITE" layoutX="14.0" layoutY="14.0" radius="25.0" stroke="BLACK" strokeType="INSIDE" />
+      <TextArea fx:id="initText" layoutX="23.0" layoutY="-33.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="45.0" prefRowCount="5" prefWidth="79.0" promptText="initial tokens" stylesheets="@placeTextArea.css" />
+      <TextField fx:id="typeText" layoutX="23.0" layoutY="28.0" prefHeight="23.0" prefWidth="49.0" promptText="TYPE" stylesheets="@placeTextArea.css" />
+      <TextField fx:id="nameText" layoutX="-11.0" layoutY="3.0" prefHeight="23.0" prefWidth="50.0" promptText="name" stylesheets="@placeTextArea.css" />
+   </children>
+</Group>
