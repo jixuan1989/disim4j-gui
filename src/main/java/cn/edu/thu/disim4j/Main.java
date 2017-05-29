@@ -1,12 +1,15 @@
 package cn.edu.thu.disim4j;
 
 	
+import cn.edu.thu.disim4j.elements.PlaceController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 
 public class Main extends Application {
@@ -14,7 +17,9 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			VBox root = (VBox)FXMLLoader.load(getClass().getResource("Main.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Main.fxml"));
+			VBox root = (VBox)fxmlLoader.load();
+			MainController controller=(MainController)fxmlLoader.getController();
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			
@@ -30,6 +35,7 @@ public class Main extends Application {
 				}
 			});
 			mainStage=primaryStage;
+			mainStage.addEventFilter(KeyEvent.KEY_PRESSED, controller.keyTypedHandler);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

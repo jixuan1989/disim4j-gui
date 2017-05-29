@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.shape.*?>
+
+<Group fx:id="group" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.edu.thu.disim4j.elements.TransitionController">
+   <children>
+      <TextArea fx:id="functionText" layoutX="68.0" layoutY="-8.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="63.0" prefRowCount="5" prefWidth="146.0" promptText="output function" stylesheets="@placeTextArea.css" />
+      <Rectangle fx:id="transitionRect" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="-22.0" layoutY="-8.0" stroke="BLACK" strokeType="INSIDE" width="90.0" />
+      <TextField fx:id="nameText" layoutX="-2.0" layoutY="4.0" prefHeight="23.0" prefWidth="50.0" promptText="name" stylesheets="@placeTextArea.css" />
+   </children>
+</Group>

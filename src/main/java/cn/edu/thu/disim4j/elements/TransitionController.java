@@ -17,17 +17,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
-public class PlaceController extends ElementController implements Initializable{
+public class TransitionController extends ElementController implements Initializable{
 
 	@FXML
-	Circle placeCircle;
+	Rectangle transitionRect;
 	@FXML
 	TextField nameText;
 	@FXML
-	TextArea initText;
-	@FXML
-	TextField typeText;
+	TextArea functionText;
+
 	@FXML
 	Group group;
 
@@ -38,17 +38,18 @@ public class PlaceController extends ElementController implements Initializable{
 	}
 	@Override
 	double getCenterOffsetX() {
-		return placeCircle.getRadius()+25;
+		return transitionRect.getWidth()/2;
 	}
 
 	@Override
 	double getCenterOffsetY() {
-		return placeCircle.getRadius()+10;
+		return transitionRect.getHeight()/2;
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize(location, resources);
+		transitionRect.setOnMouseClicked(circleOnMouseClickedEventHandler);
 	}
 
 
@@ -59,7 +60,7 @@ public class PlaceController extends ElementController implements Initializable{
 			new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
-			initText.setVisible(!initText.isVisible());
+			functionText.setVisible(!functionText.isVisible());
 		}
 	};
 
