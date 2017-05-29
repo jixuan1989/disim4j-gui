@@ -7,11 +7,13 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import cn.edu.thu.disim4j.elements.ElementController;
+import cn.edu.thu.disim4j.elements.MyCubicCurve;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -23,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 public class MainController implements Initializable, GlobalController{
 
@@ -55,7 +58,10 @@ public class MainController implements Initializable, GlobalController{
 	Group placeOnCursor;
 	Group transitionOnCursor;
 	//TODO 新增元素时在这里加新的变量
-	
+	//drawType=Line 时连线模式
+	boolean start=true;//连线开始还是结束的标记
+	Shape startNode;//连线开始位置
+	Shape endNode;//连线结束位置
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initNodesOnCursor();
@@ -69,7 +75,8 @@ public class MainController implements Initializable, GlobalController{
 		paintPane.setOnMouseEntered(mouseEnterOrLeaveGlobal);
 		paintPane.setOnMouseExited(mouseEnterOrLeaveGlobal);
 		paintPane.setOnMouseClicked(paintPaneOnMouseClickedEventHandler);
-		
+		MyCubicCurve curve=new MyCubicCurve(100, 100, 150, 150);
+		paintPane.getChildren().add(curve);
 	}
 	
 	@Override
@@ -84,30 +91,18 @@ public class MainController implements Initializable, GlobalController{
 	}
 
 
-	//用户点击了左边的库所元素时
-	private EventHandler<MouseEvent> leftNodeOnMouseClickedEventHandler = 
-			new EventHandler<MouseEvent>() {
-		@Override
-		public void handle(MouseEvent t) {
-			//TODO 新增元素时扩展这里
-			if(paintPane.getOnMouseMoved()==null){//确保重复点击无效
-				if(t.getSource().equals(leftPlace)){//如果点击的是库所
-					drawType=DrawType.Place;
-				}else if(t.getSource().equals(leftRect)){
-					drawType=DrawType.Transition;
-				}
-				paintPane.setOnMouseMoved(mouseMoveGlobal);
-				paintPane.getChildren().add(getNodeOnCursor());
-			}
-		}
-	};
+	
 	//用户在主画板上点击了鼠标
 	private EventHandler<MouseEvent> paintPaneOnMouseClickedEventHandler = 
 			new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
 			if(paintPane.getOnMouseMoved()!=null){//==null时相当于用户并没有点选左边的基础元素（此时drawType==None）
-				addNewNodeOnPaintPane(t);
+				//line比较特殊
+				if(!drawType.equals(DrawType.Line))
+					addNewNodeOnPaintPane(t);
+				System.out.println("北大简介");
+				System.out.println(t.getTarget());
 			}
 		}
 
@@ -134,7 +129,7 @@ public class MainController implements Initializable, GlobalController{
 		}
 	};
 	
-	//发现按下了esc 就将鼠标上的图形去掉
+	//发现按下了esc 就将鼠标上的图形去掉。同时清除未完成的连线状态
 	EventHandler<KeyEvent> keyTypedHandler = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
@@ -143,6 +138,11 @@ public class MainController implements Initializable, GlobalController{
                 paintPane.getChildren().remove(getNodeOnCursor());
                 paintPane.setOnMouseMoved(null);
             	drawType=DrawType.None;
+            	if(!start){
+            		startNode=null;
+            		endNode=null;
+            	}
+            	paintPane.setCursor(Cursor.DEFAULT);
             }
 		}
 	};
@@ -164,9 +164,30 @@ public class MainController implements Initializable, GlobalController{
 	}
 	
 
-	
+	//用户点击了左边的库所元素时
+		private EventHandler<MouseEvent> leftNodeOnMouseClickedEventHandler = 
+				new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent t) {
+				//TODO 新增元素时扩展这里
+				if(paintPane.getOnMouseMoved()==null){//确保重复点击无效
+					if(t.getSource().equals(leftPlace)){//如果点击的是库所
+						drawType=DrawType.Place;
+					}else if(t.getSource().equals(leftRect)){
+						drawType=DrawType.Transition;
+					}else if(t.getSource().equals(leftLine)){
+						drawType=DrawType.Line;
+						paintPane.setCursor(Cursor.OPEN_HAND);
+						System.out.println("点击line了");
+						start=true;
+					}
+					paintPane.setOnMouseMoved(mouseMoveGlobal);
+					paintPane.getChildren().add(getNodeOnCursor());
+				}
+			}
+		};
 	static enum DrawType{//如果新增其他基础元素，请扩展这里 TODO
-		None, Place, Transition
+		None, Place, Transition, Line
 	}
 	
 	private Node getNodeOnCursor(){//如果新增其他基础元素，请扩展这里 TODO
@@ -177,6 +198,8 @@ public class MainController implements Initializable, GlobalController{
 			return placeOnCursor;
 		case Transition:
 			return transitionOnCursor;
+		case Line:
+			return none;
 		default:
 			return none;
 		}
@@ -192,6 +215,7 @@ public class MainController implements Initializable, GlobalController{
 			transitionOnCursor.setVisible(false);
 			transitionOnCursor.getChildren().get(2).setVisible(false);;//FIXME 如果修改了transition.fxml 请注意修改这个index的值
 			leftRect.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
+			leftLine.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
@@ -205,8 +229,58 @@ public class MainController implements Initializable, GlobalController{
 		case Transition:
 			addOneElement(t.getX()-45, t.getY()-25, "elements/transition.fxml");
 			break;
+		case Line:
+			break;
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public void reportClicked(Shape node) {
+		System.out.println(start);
+		if(start){
+			startNode=node;
+			endNode=null;
+			start=false;
+			paintPane.setCursor(Cursor.CLOSED_HAND);
+		}else{
+			endNode=node;
+			start=true;
+			paintPane.setCursor(Cursor.OPEN_HAND);
+			double[] locations=getcurvelocation();
+			MyCubicCurve curve=new MyCubicCurve(locations[0],locations[1],locations[2],locations[3]);
+			paintPane.getChildren().add(curve);
+		}
+	}
+	/**
+	 * 根据 start node 和end node获取贝塞尔曲线的位置
+	 * startNode 和endNode是place和rectangle，所以需要找到他们的parent（也就是Group）才能找到正确的layoutX Y
+	 * @return
+	 */
+	private double[] getcurvelocation() {
+		double result[]=new double[4];
+		System.out.println(startNode.getParent().getTranslateX());
+		System.out.println(startNode.getParent().getLayoutX());
+		if(startNode.getParent().getLayoutX()<endNode.getParent().getLayoutX()){
+			result[0]=startNode.getParent().getLayoutX()+startNode.getBoundsInLocal().getWidth();
+			result[2]=endNode.getParent().getLayoutX();
+		}else{
+			result[0]=startNode.getParent().getLayoutX();
+			result[2]=endNode.getParent().getLayoutX()+endNode.getBoundsInLocal().getWidth();
+		}
+		if(startNode.getParent().getLayoutY()<endNode.getParent().getLayoutY()){
+			result[1]=startNode.getParent().getLayoutY()+startNode.getBoundsInLocal().getHeight();
+			result[3]=endNode.getParent().getLayoutY();
+		}else{
+			result[1]=startNode.getParent().getLayoutY();
+			result[3]=endNode.getParent().getLayoutY()+endNode.getBoundsInLocal().getHeight();
+		}
+		return result;
+	}
+
+	@Override
+	public boolean isLineMode() {
+		return drawType.equals(DrawType.Line);
 	}
 }

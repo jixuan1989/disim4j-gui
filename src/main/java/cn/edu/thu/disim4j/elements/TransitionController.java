@@ -31,7 +31,7 @@ public class TransitionController extends ElementController implements Initializ
 	@FXML
 	Group group;
 
-	
+
 	@Override
 	Group getGroup() {
 		return group;
@@ -60,7 +60,12 @@ public class TransitionController extends ElementController implements Initializ
 			new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
-			functionText.setVisible(!functionText.isVisible());
+			System.out.println("我被点击了");
+			if(controller!=null&&controller.isLineMode()){//左边的基础元素没有controller
+				controller.reportClicked(transitionRect);
+			}else{
+				functionText.setVisible(!functionText.isVisible());
+			}
 		}
 	};
 
