@@ -3,6 +3,7 @@ package cn.edu.thu.disim4j.elements;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import cn.edu.thu.disim4j.Coordinate;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -33,7 +34,7 @@ public class TransitionController extends ElementController implements Initializ
 
 
 	@Override
-	Group getGroup() {
+	public Group getGroup() {
 		return group;
 	}
 	@Override
@@ -62,12 +63,27 @@ public class TransitionController extends ElementController implements Initializ
 		public void handle(MouseEvent t) {
 			System.out.println("我被点击了");
 			if(controller!=null&&controller.isLineMode()){//左边的基础元素没有controller
-				controller.reportClicked(transitionRect);
+				controller.reportClicked(transitionRect,TransitionController.this);
 			}else{
 				functionText.setVisible(!functionText.isVisible());
 			}
 		}
 	};
-
+	@Override
+	public Coordinate getTopConnectionCoordinate() {
+		return new Coordinate(group.getLayoutX()+group.getTranslateX()+transitionRect.getWidth()/2,group.getLayoutY()+group.getTranslateY() );
+	}
+	@Override
+	public Coordinate getBottomConnectionCoordinate() {
+		return new Coordinate(group.getLayoutX()+group.getTranslateX()+transitionRect.getWidth()/2,group.getLayoutY()+group.getTranslateY()+transitionRect.getHeight());
+	}
+	@Override
+	public Coordinate getLeftConnectionCoordinate() {
+		return new Coordinate(group.getLayoutX()+group.getTranslateX(), group.getLayoutY()+group.getTranslateY()+transitionRect.getHeight()/2 );
+	}
+	@Override
+	public Coordinate getRightConnectionCoordinate() {
+		return new Coordinate(group.getLayoutX()+group.getTranslateX()+transitionRect.getWidth(),group.getLayoutY()+group.getTranslateY()+transitionRect.getHeight()/2 );
+	}
 
 }

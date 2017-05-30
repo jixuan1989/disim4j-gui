@@ -3,6 +3,7 @@ package cn.edu.thu.disim4j.elements;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import cn.edu.thu.disim4j.Coordinate;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,7 +28,7 @@ public class PlaceController extends ElementController implements Initializable{
 
 
 	@Override
-	Group getGroup() {
+	public Group getGroup() {
 		return group;
 	}
 	@Override
@@ -44,9 +45,8 @@ public class PlaceController extends ElementController implements Initializable{
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize(location, resources);
 		placeCircle.setOnMouseClicked(circleOnMouseClickedEventHandler);
+
 	}
-
-
 
 
 	//单击鼠标的时候，将init token收起来
@@ -54,14 +54,32 @@ public class PlaceController extends ElementController implements Initializable{
 			new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
-			System.out.println("被点击了");
+			System.out.println("被点击了"+t.getX());
 			if(controller!=null&&controller.isLineMode()){//左边的基础元素没有controller
-				controller.reportClicked(placeCircle);
+				controller.reportClicked(placeCircle, PlaceController.this);
 			}else{
 				initText.setVisible(!initText.isVisible());
 			}
 		}
 	};
+
+
+	@Override
+	public Coordinate getTopConnectionCoordinate() {
+		return new Coordinate(group.getLayoutX()+group.getTranslateX()+placeCircle.getRadius(),group.getLayoutY()+group.getTranslateY() );
+	}
+	@Override
+	public Coordinate getBottomConnectionCoordinate() {
+		return new Coordinate(group.getLayoutX()+group.getTranslateX()+placeCircle.getRadius(),group.getLayoutY()+group.getTranslateY()+2*placeCircle.getRadius());
+	}
+	@Override
+	public Coordinate getLeftConnectionCoordinate() {
+		return new Coordinate(group.getLayoutX()+group.getTranslateX(),group.getLayoutY()+group.getTranslateY()+placeCircle.getRadius() );
+	}
+	@Override
+	public Coordinate getRightConnectionCoordinate() {
+		return new Coordinate(group.getLayoutX()+group.getTranslateX()+2*placeCircle.getRadius(),group.getLayoutY()+group.getTranslateY()+placeCircle.getRadius() );
+	}
 
 
 }

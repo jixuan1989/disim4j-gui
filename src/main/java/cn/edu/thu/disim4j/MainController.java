@@ -2,6 +2,7 @@ package cn.edu.thu.disim4j;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -18,6 +19,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -32,8 +34,8 @@ public class MainController implements Initializable, GlobalController{
 	DrawType drawType=DrawType.None;
 	Group none=new Group();//无意义的
 	int counter=0;//每个元素都给一个唯一编号
-	Map<Integer, Group> elements=new HashMap<>();//存储画板上所有元素
-	Map<Group, Integer> reverseElements=new HashMap<>();
+	Map<Integer, ElementController> elements=new HashMap<>();//存储画板上所有元素
+	Map<ElementController, Integer> reverseElements=new HashMap<>();
 	@FXML 
 	Pane paintPane;
 	@FXML
@@ -60,8 +62,8 @@ public class MainController implements Initializable, GlobalController{
 	//TODO 新增元素时在这里加新的变量
 	//drawType=Line 时连线模式
 	boolean start=true;//连线开始还是结束的标记
-	Shape startNode;//连线开始位置
-	Shape endNode;//连线结束位置
+	ElementController startNodeController;//连线开始位置
+	ElementController endNodeController;//连线结束位置
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initNodesOnCursor();
@@ -71,21 +73,18 @@ public class MainController implements Initializable, GlobalController{
 		addVButton.setOnAction( (EventHandler<ActionEvent>) e->{
 			paintPane.setMinHeight(paintPane.getHeight()+500);
 		});
-		
 		paintPane.setOnMouseEntered(mouseEnterOrLeaveGlobal);
 		paintPane.setOnMouseExited(mouseEnterOrLeaveGlobal);
 		paintPane.setOnMouseClicked(paintPaneOnMouseClickedEventHandler);
-		MyCubicCurve curve=new MyCubicCurve(100, 100, 150, 150);
-		paintPane.getChildren().add(curve);
 	}
 	
 	@Override
-	public void remove(Node node) {
+	public void remove(Node node, ElementController controller) {
 		paintPane.getChildren().remove(node);
-		Integer integer=reverseElements.get(node);
+		Integer integer=reverseElements.get(controller);
 		if(integer!=null){
 			elements.remove(integer);
-			reverseElements.remove(node);
+			reverseElements.remove(controller);
 		}
 		
 	}
@@ -134,19 +133,23 @@ public class MainController implements Initializable, GlobalController{
 		@Override
 		public void handle(KeyEvent event) {
             if (event.getCode() == KeyCode.ESCAPE){
-            	getNodeOnCursor().setVisible(false);
-                paintPane.getChildren().remove(getNodeOnCursor());
-                paintPane.setOnMouseMoved(null);
-            	drawType=DrawType.None;
-            	if(!start){
-            		startNode=null;
-            		endNode=null;
-            	}
-            	paintPane.setCursor(Cursor.DEFAULT);
+            	clearCursor();
             }
 		}
 	};
-
+	private void clearCursor(){
+		getNodeOnCursor().setVisible(false);
+        paintPane.getChildren().remove(getNodeOnCursor());
+        paintPane.setOnMouseMoved(null);
+    	drawType=DrawType.None;
+    	if(!start){
+    		startNodeController.getGroup().setEffect(new DropShadow());
+    		startNodeController=null;
+    		endNodeController=null;
+    	}
+    	paintPane.setCursor(Cursor.DEFAULT);
+	}
+	
 	private void addOneElement(double x, double y, String fxml){
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
 		try {
@@ -155,13 +158,16 @@ public class MainController implements Initializable, GlobalController{
 			ElementController controller=(ElementController)fxmlLoader.getController();
 			controller.addListener(this);
 			paintPane.getChildren().add(group);
-			elements.put(counter, group);
-			reverseElements.put(group, counter);
+			elements.put(counter, controller);
+			reverseElements.put(controller, counter);
 			group.relocate(x, y);
+			System.out.println(group.getTranslateX());
+			System.out.println("input:"+x+","+y+"|now:"+group.getLayoutX()+","+group.getLayoutY());
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
 	}
+	
 	
 
 	//用户点击了左边的库所元素时
@@ -170,6 +176,9 @@ public class MainController implements Initializable, GlobalController{
 			@Override
 			public void handle(MouseEvent t) {
 				//TODO 新增元素时扩展这里
+				paintPane.setOnMouseMoved(null);
+				paintPane.getChildren().remove(getNodeOnCursor());
+				clearCursor();
 				if(paintPane.getOnMouseMoved()==null){//确保重复点击无效
 					if(t.getSource().equals(leftPlace)){//如果点击的是库所
 						drawType=DrawType.Place;
@@ -177,7 +186,7 @@ public class MainController implements Initializable, GlobalController{
 						drawType=DrawType.Transition;
 					}else if(t.getSource().equals(leftLine)){
 						drawType=DrawType.Line;
-						paintPane.setCursor(Cursor.OPEN_HAND);
+						paintPane.setCursor(Cursor.CROSSHAIR);
 						System.out.println("点击line了");
 						start=true;
 					}
@@ -191,6 +200,7 @@ public class MainController implements Initializable, GlobalController{
 	}
 	
 	private Node getNodeOnCursor(){//如果新增其他基础元素，请扩展这里 TODO
+		//务必不要重新new新的对象
 		switch (drawType) {
 		case None:
 			return none;
@@ -237,20 +247,29 @@ public class MainController implements Initializable, GlobalController{
 	}
 
 	@Override
-	public void reportClicked(Shape node) {
+	public void reportClicked(Shape node, ElementController controller) {
 		System.out.println(start);
 		if(start){
-			startNode=node;
-			endNode=null;
+			startNodeController=controller;
+			endNodeController=null;
 			start=false;
 			paintPane.setCursor(Cursor.CLOSED_HAND);
+			startNodeController.getGroup().setEffect(new DropShadow());
 		}else{
-			endNode=node;
+			
+			if(controller.getClass().equals(startNodeController.getClass())){
+				return;
+			}
+			endNodeController=controller;
 			start=true;
-			paintPane.setCursor(Cursor.OPEN_HAND);
+			paintPane.setCursor(Cursor.CROSSHAIR);
 			double[] locations=getcurvelocation();
 			MyCubicCurve curve=new MyCubicCurve(locations[0],locations[1],locations[2],locations[3]);
 			paintPane.getChildren().add(curve);
+			//关联该边到相关元素
+			endNodeController.associateInArc(curve);
+			startNodeController.associateOutArc(curve);
+			startNodeController.getGroup().setEffect(null);
 		}
 	}
 	/**
@@ -259,22 +278,17 @@ public class MainController implements Initializable, GlobalController{
 	 * @return
 	 */
 	private double[] getcurvelocation() {
-		double result[]=new double[4];
-		System.out.println(startNode.getParent().getTranslateX());
-		System.out.println(startNode.getParent().getLayoutX());
-		if(startNode.getParent().getLayoutX()<endNode.getParent().getLayoutX()){
-			result[0]=startNode.getParent().getLayoutX()+startNode.getBoundsInLocal().getWidth();
-			result[2]=endNode.getParent().getLayoutX();
+		double result[]=new double[4];		
+		if(startNodeController.getLayoutX()<endNodeController.getLayoutX()){
+			result[0]=startNodeController.getRightConnectionCoordinate().x;
+			result[1]=startNodeController.getRightConnectionCoordinate().y;
+			result[2]=endNodeController.getLeftConnectionCoordinate().x;
+			result[3]=endNodeController.getLeftConnectionCoordinate().y;
 		}else{
-			result[0]=startNode.getParent().getLayoutX();
-			result[2]=endNode.getParent().getLayoutX()+endNode.getBoundsInLocal().getWidth();
-		}
-		if(startNode.getParent().getLayoutY()<endNode.getParent().getLayoutY()){
-			result[1]=startNode.getParent().getLayoutY()+startNode.getBoundsInLocal().getHeight();
-			result[3]=endNode.getParent().getLayoutY();
-		}else{
-			result[1]=startNode.getParent().getLayoutY();
-			result[3]=endNode.getParent().getLayoutY()+endNode.getBoundsInLocal().getHeight();
+			result[0]=startNodeController.getLeftConnectionCoordinate().x;
+			result[1]=startNodeController.getLeftConnectionCoordinate().y;
+			result[2]=endNodeController.getRightConnectionCoordinate().x;
+			result[3]=endNodeController.getRightConnectionCoordinate().y;
 		}
 		return result;
 	}

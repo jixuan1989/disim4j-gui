@@ -1,8 +1,12 @@
 package cn.edu.thu.disim4j.elements;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import cn.edu.thu.disim4j.Coordinate;
 import cn.edu.thu.disim4j.GlobalController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,7 +23,12 @@ public abstract class ElementController {
 	public void addListener(GlobalController controller){
 		this.controller=controller;
 	}
-
+	//关联的入边
+	List<MyCubicCurve> inArcs=new ArrayList<>();
+	//关联的出边
+	List<MyCubicCurve> outArcs=new ArrayList<>();
+	
+	
 	//circle
 	final ContextMenu contextMenu = new ContextMenu();
 	public void initialize(URL location, ResourceBundle resources) {
@@ -41,7 +50,9 @@ public abstract class ElementController {
 		MenuItem item1 = new MenuItem("删除");
 		item1.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				controller.remove(getGroup());
+				controller.remove(getGroup(), ElementController.this);
+				inArcs.forEach(arc->controller.remove(arc, ElementController.this));
+				outArcs.forEach(arc->controller.remove(arc, ElementController.this));
 			}
 		});
 		contextMenu.getItems().addAll(item1);
@@ -51,7 +62,7 @@ public abstract class ElementController {
 	 * 
 	 * @return 返回root元素
 	 */
-	abstract Group getGroup();
+	abstract public Group getGroup();
 	/**
 	 * 
 	 * @return 返回group左上角到中心的X偏移值
@@ -62,7 +73,7 @@ public abstract class ElementController {
 	 * @return 返回group左上角到中心的Y偏移值
 	 */
 	abstract double getCenterOffsetY();
-	
+
 	double orgSceneX, orgSceneY;
 	double orgTranslateX, orgTranslateY;
 	//鼠标按下的时候，开始记录当前位置
@@ -70,12 +81,19 @@ public abstract class ElementController {
 			new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
+			System.out.println(t.getX());
 			orgSceneX = t.getSceneX();
 			orgSceneY = t.getSceneY();
 			//orgTranslateX = ((Circle)(t.getSource())).getTranslateX();
 			//orgTranslateY = ((Circle)(t.getSource())).getTranslateY();
 			orgTranslateX = getGroup().getTranslateX();
 			orgTranslateY = getGroup().getTranslateY();
+			inArcs.stream().filter(arc->arc.getParent()!=null).forEach(arc->{
+				arc.end.simulateMousePressed(getGroup().getLayoutX()+getGroup().getTranslateX()+t.getX(), getGroup().getLayoutY()+getGroup().getTranslateY()+t.getY());
+			});
+			outArcs.stream().filter(arc->arc.getParent()!=null).forEach(arc->{
+				arc.start.simulateMousePressed(getGroup().getLayoutX()+getGroup().getTranslateX()+t.getX(), getGroup().getLayoutY()+getGroup().getTranslateY()+t.getY());
+			});
 			t.consume();
 		}
 	};
@@ -84,6 +102,7 @@ public abstract class ElementController {
 			new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
+
 			double offsetX = t.getSceneX() - orgSceneX;
 			double offsetY = t.getSceneY() - orgSceneY;
 			double newTranslateX = orgTranslateX + offsetX;
@@ -92,6 +111,39 @@ public abstract class ElementController {
 			//((Circle)(t.getSource())).setTranslateY(newTranslateY);
 			getGroup().setTranslateX(newTranslateX);
 			getGroup().setTranslateY(newTranslateY);
+			inArcs.stream().filter(arc->arc.getParent()!=null).forEach(arc->{
+				arc.end.simulateMouseDragged(getGroup().getLayoutX()+getGroup().getTranslateX()+t.getX(), getGroup().getLayoutY()+getGroup().getTranslateY()+t.getY());
+			});
+			outArcs.stream().filter(arc->arc.getParent()!=null).forEach(arc->{
+				arc.start.simulateMouseDragged(getGroup().getLayoutX()+getGroup().getTranslateX()+t.getX(), getGroup().getLayoutY()+getGroup().getTranslateY()+t.getY());
+			});
+
 		}
 	};
+	public double getLayoutX(){
+		return getGroup().getLayoutX()+getGroup().getTranslateX();
+	}
+	public double getLayoutY(){
+		return getGroup().getLayoutY()+getGroup().getTranslateY();
+	}
+	/**
+	 * 关联一条边
+	 * @param curve
+	 */
+	public void associateInArc(MyCubicCurve curve){
+		inArcs.add(curve);
+	}
+	/**
+	 * 关联一条边
+	 * @param curve
+	 */
+	public void associateOutArc(MyCubicCurve curve){
+		outArcs.add(curve);
+	}
+	abstract public Coordinate getTopConnectionCoordinate();
+	abstract public Coordinate getBottomConnectionCoordinate();
+	abstract public Coordinate getLeftConnectionCoordinate();
+	abstract public Coordinate getRightConnectionCoordinate();
+
+
 }

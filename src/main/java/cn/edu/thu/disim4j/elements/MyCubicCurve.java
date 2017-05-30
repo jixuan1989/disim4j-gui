@@ -111,15 +111,33 @@ public class MyCubicCurve extends Group{
 	      y.bind(centerYProperty());
 	      enableDrag();
 	    }
-
+	    private Delta simulateDragDelta=new Delta();
+	    public void simulateMousePressed(double mouse_x, double mouse_y){
+	    	simulateDragDelta.x = Anchor.this.getCenterX() - mouse_x;
+	    	simulateDragDelta.y = Anchor.this.getCenterY() - mouse_y;
+	    }
+	    public void simulateMouseDragged(double mouse_x, double mouse_y){
+	    	double newX = mouse_x + simulateDragDelta.x;
+	          if (newX > 0 && newX < getScene().getWidth()) {
+	        	  Anchor.this.setCenterX(newX);
+	          }  
+	          double newY = mouse_y + simulateDragDelta.y;
+	          if (newY > 0 && newY < getScene().getHeight()) {
+	        	  Anchor.this.setCenterY(newY);
+	          }
+	          // update arrow positions
+	          for( Arrow arrow: arrows) {
+	              arrow.update();
+	          }
+	    }
 	    // make a node movable by dragging it around with the mouse.
 	    private void enableDrag() {
 	      final Delta dragDelta = new Delta();
 	      setOnMousePressed(new EventHandler<MouseEvent>() {
 	        @Override public void handle(MouseEvent mouseEvent) {
 	          // record a delta distance for the drag and drop operation.
-	          dragDelta.x = getCenterX() - mouseEvent.getX();
-	          dragDelta.y = getCenterY() - mouseEvent.getY();
+	          dragDelta.x = Anchor.this.getCenterX() - mouseEvent.getX();
+	          dragDelta.y = Anchor.this.getCenterY() - mouseEvent.getY();
 	          getScene().setCursor(Cursor.MOVE);
 	        }
 	      });
@@ -132,13 +150,13 @@ public class MyCubicCurve extends Group{
 	        @Override public void handle(MouseEvent mouseEvent) {
 	          double newX = mouseEvent.getX() + dragDelta.x;
 	          if (newX > 0 && newX < getScene().getWidth()) {
-	            setCenterX(newX);
+	        	  Anchor.this.setCenterX(newX);
 	          }  
 	          double newY = mouseEvent.getY() + dragDelta.y;
 	          if (newY > 0 && newY < getScene().getHeight()) {
-	            setCenterY(newY);
+	        	  Anchor.this.setCenterY(newY);
 	          }
-
+	          System.out.println("mouse:"+mouseEvent.getX()+",dragDelta.x:"+dragDelta.x+",finallh:"+newX);
 	          // update arrow positions
 	          for( Arrow arrow: arrows) {
 	              arrow.update();
