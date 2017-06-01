@@ -56,10 +56,24 @@ public class MainController implements Initializable, GlobalController{
 	Button addHButton;
 	@FXML
 	Button addVButton;
-
+	@FXML
+	Circle leftCommPlace;
+	@FXML
+	Rectangle leftCommRect;
+	@FXML 
+	Circle leftStorePlace;//TODO 尚未实现
+	@FXML
+	Rectangle leftTimeoutRect;//TODO 尚未实现
+	
+	//鼠标上的图案
 	Group placeOnCursor;
 	Group transitionOnCursor;
+	Group commPlaceOnCursor;
+	Group commTransitionOnCursor;
+	Group storePlaceOnCursor;
+	Group timeoutTransitionOnCursor;
 	//TODO 新增元素时在这里加新的变量
+	
 	//drawType=Line 时连线模式
 	boolean start=true;//连线开始还是结束的标记
 	ElementController startNodeController;//连线开始位置
@@ -143,7 +157,7 @@ public class MainController implements Initializable, GlobalController{
         paintPane.setOnMouseMoved(null);
     	drawType=DrawType.None;
     	if(!start){
-    		startNodeController.getGroup().setEffect(new DropShadow());
+    		startNodeController.getGroup().setEffect(null);
     		startNodeController=null;
     		endNodeController=null;
     	}
@@ -189,6 +203,14 @@ public class MainController implements Initializable, GlobalController{
 						paintPane.setCursor(Cursor.CROSSHAIR);
 						System.out.println("点击line了");
 						start=true;
+					}else if(t.getSource().equals(leftCommPlace)){
+						drawType=DrawType.CommPlace;
+					}else if(t.getSource().equals(leftCommRect)){
+						drawType=DrawType.CommTransition;
+					}else if(t.getSource().equals(leftStorePlace)){
+						drawType=DrawType.StorePlace;
+					}else if(t.getSource().equals(leftTimeoutRect)){
+						drawType=DrawType.TimeoutTransition;
 					}
 					paintPane.setOnMouseMoved(mouseMoveGlobal);
 					paintPane.getChildren().add(getNodeOnCursor());
@@ -196,7 +218,7 @@ public class MainController implements Initializable, GlobalController{
 			}
 		};
 	static enum DrawType{//如果新增其他基础元素，请扩展这里 TODO
-		None, Place, Transition, Line
+		None, Place, Transition, Line, CommPlace, CommTransition, StorePlace, TimeoutTransition
 	}
 	
 	private Node getNodeOnCursor(){//如果新增其他基础元素，请扩展这里 TODO
@@ -210,6 +232,10 @@ public class MainController implements Initializable, GlobalController{
 			return transitionOnCursor;
 		case Line:
 			return none;
+		case CommPlace:
+			return commPlaceOnCursor;
+		case CommTransition:
+			return commTransitionOnCursor;
 		default:
 			return none;
 		}
@@ -225,7 +251,18 @@ public class MainController implements Initializable, GlobalController{
 			transitionOnCursor.setVisible(false);
 			transitionOnCursor.getChildren().get(2).setVisible(false);;//FIXME 如果修改了transition.fxml 请注意修改这个index的值
 			leftRect.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
+			//Line比较特殊，只有一行代码
 			leftLine.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
+			//如果新增其他基础元素，请扩展这里 TODO
+			commPlaceOnCursor= (Group)new FXMLLoader(getClass().getResource("elements/commPlace.fxml")).load();
+			commPlaceOnCursor.setVisible(false);
+			commPlaceOnCursor.getChildren().get(3).setVisible(false);//FIXME 如果修改了transition.fxml 请注意修改这个index的值
+			leftCommPlace.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
+			//如果新增其他基础元素，请扩展这里 TODO
+			commTransitionOnCursor= (Group)new FXMLLoader(getClass().getResource("elements/commTransition.fxml")).load();
+			commTransitionOnCursor.setVisible(false);
+			commTransitionOnCursor.getChildren().get(2).setVisible(false);;//FIXME 如果修改了transition.fxml 请注意修改这个index的值
+			leftCommRect.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
@@ -241,6 +278,13 @@ public class MainController implements Initializable, GlobalController{
 			break;
 		case Line:
 			break;
+		case CommPlace:
+			addOneElement(t.getX()-25, t.getY()-30, "elements/commPlace.fxml");
+			break;
+		case CommTransition:
+			addOneElement(t.getX()-25, t.getY()-30, "elements/commTransition.fxml");
+			break;
+				
 		default:
 			break;
 		}
