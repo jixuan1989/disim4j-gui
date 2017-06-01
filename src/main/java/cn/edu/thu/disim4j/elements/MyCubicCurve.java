@@ -45,8 +45,6 @@ public class MyCubicCurve extends Group{
 			public void handle(MouseEvent event) {
 				controlLine1.setVisible(!controlLine1.isVisible());
 				controlLine2.setVisible(!controlLine2.isVisible());
-				start.setVisible(!start.isVisible());
-				end.setVisible(!end.isVisible());
 				control1.setVisible(!control1.isVisible());
 				control2.setVisible(!control2.isVisible());
 			}
