@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+
+<Group fx:id="group" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.edu.thu.disim4j.elements.CommPlaceController">
+   <children>
+      <Circle fx:id="placeCircle" fill="WHITE" layoutX="25.0" layoutY="25.0" radius="25.0" stroke="BLACK" strokeType="INSIDE" />
+      <TextArea fx:id="initText" layoutX="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="45.0" prefRowCount="5" prefWidth="79.0" promptText="initial tokens" stylesheets="@placeTextArea.css" />
+      <TextField fx:id="typeText" layoutX="50.0" layoutY="40.0" prefHeight="23.0" prefWidth="49.0" promptText="TYPE" stylesheets="@placeTextArea.css" />
+      <TextField fx:id="nameText" layoutY="14.0" prefHeight="23.0" prefWidth="50.0" promptText="name" stylesheets="@placeTextArea.css" />
+      <Line disable="true" endX="25.0" endY="-25.0" layoutX="25.0" layoutY="50.0" startX="0.0" />
+   </children>
+</Group>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+
+<Group fx:id="group" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.edu.thu.disim4j.elements.TimeoutTransitionController">
+   <children>
+      <TextArea fx:id="functionText" layoutX="90.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="63.0" prefRowCount="5" prefWidth="146.0" promptText="output function" stylesheets="@placeTextArea.css" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" stroke="BLACK" strokeType="INSIDE" width="90.0" />
+      <Rectangle fx:id="transitionRect" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="44.0" layoutX="3.0" layoutY="3.0" stroke="BLACK" strokeType="INSIDE" width="85.0" />
+      <TextField fx:id="nameText" layoutX="20.0" layoutY="12.0" prefHeight="23.0" prefWidth="50.0" promptText="name" stylesheets="@placeTextArea.css" />
+   </children>
+</Group>

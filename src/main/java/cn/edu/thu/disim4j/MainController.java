@@ -61,9 +61,9 @@ public class MainController implements Initializable, GlobalController{
 	@FXML
 	Rectangle leftCommRect;
 	@FXML 
-	Circle leftStorePlace;//TODO 尚未实现
+	Circle leftStorePlace;
 	@FXML
-	Rectangle leftTimeoutRect;//TODO 尚未实现
+	Rectangle leftTimeoutRect;
 	
 	//鼠标上的图案
 	Group placeOnCursor;
@@ -236,6 +236,10 @@ public class MainController implements Initializable, GlobalController{
 			return commPlaceOnCursor;
 		case CommTransition:
 			return commTransitionOnCursor;
+		case StorePlace:
+			return storePlaceOnCursor;
+		case TimeoutTransition:
+			return timeoutTransitionOnCursor;
 		default:
 			return none;
 		}
@@ -253,16 +257,26 @@ public class MainController implements Initializable, GlobalController{
 			leftRect.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
 			//Line比较特殊，只有一行代码
 			leftLine.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
-			//如果新增其他基础元素，请扩展这里 TODO
+			
 			commPlaceOnCursor= (Group)new FXMLLoader(getClass().getResource("elements/commPlace.fxml")).load();
 			commPlaceOnCursor.setVisible(false);
 			commPlaceOnCursor.getChildren().get(3).setVisible(false);//FIXME 如果修改了transition.fxml 请注意修改这个index的值
 			leftCommPlace.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
-			//如果新增其他基础元素，请扩展这里 TODO
+			
 			commTransitionOnCursor= (Group)new FXMLLoader(getClass().getResource("elements/commTransition.fxml")).load();
 			commTransitionOnCursor.setVisible(false);
 			commTransitionOnCursor.getChildren().get(2).setVisible(false);;//FIXME 如果修改了transition.fxml 请注意修改这个index的值
 			leftCommRect.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
+			
+			storePlaceOnCursor= (Group)new FXMLLoader(getClass().getResource("elements/storePlace.fxml")).load();
+			storePlaceOnCursor.setVisible(false);
+			storePlaceOnCursor.getChildren().get(4).setVisible(false);//FIXME 如果修改了transition.fxml 请注意修改这个index的值
+			leftStorePlace.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
+			
+			timeoutTransitionOnCursor= (Group)new FXMLLoader(getClass().getResource("elements/timeoutTransition.fxml")).load();
+			timeoutTransitionOnCursor.setVisible(false);
+			timeoutTransitionOnCursor.getChildren().get(3).setVisible(false);;//FIXME 如果修改了transition.fxml 请注意修改这个index的值
+			leftTimeoutRect.setOnMouseClicked(leftNodeOnMouseClickedEventHandler);
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
@@ -284,7 +298,12 @@ public class MainController implements Initializable, GlobalController{
 		case CommTransition:
 			addOneElement(t.getX()-25, t.getY()-30, "elements/commTransition.fxml");
 			break;
-				
+		case StorePlace:
+			addOneElement(t.getX()-25, t.getY()-30, "elements/storePlace.fxml");
+			break;
+		case TimeoutTransition:
+			addOneElement(t.getX()-25, t.getY()-30, "elements/timeoutTransition.fxml");
+			break;
 		default:
 			break;
 		}
@@ -300,8 +319,7 @@ public class MainController implements Initializable, GlobalController{
 			paintPane.setCursor(Cursor.CLOSED_HAND);
 			startNodeController.getGroup().setEffect(new DropShadow());
 		}else{
-			
-			if(controller.getClass().equals(startNodeController.getClass())){
+			if(controller.getClass().equals(startNodeController.getClass())){//TODO 这里添加更复杂的逻辑，保证库所和变迁不能相连
 				return;
 			}
 			endNodeController=controller;
