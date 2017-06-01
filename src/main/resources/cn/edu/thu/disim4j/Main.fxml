@@ -90,7 +90,7 @@
                   <Line endX="25.0" endY="-25.0" layoutX="60.0" layoutY="266.0" />
                   <Line endX="30.0" endY="-25.0" layoutX="60.0" layoutY="330.0" />
                   <Circle fill="WHITE" layoutX="63.0" layoutY="369.0" radius="25.0" stroke="BLACK" strokeType="INSIDE" />
-                  <Circle fx:id="leftStorePlace1" fill="WHITE" layoutX="63.0" layoutY="369.0" radius="21.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Circle fx:id="leftStorePlace" fill="WHITE" layoutX="63.0" layoutY="369.0" radius="21.0" stroke="BLACK" strokeType="INSIDE" />
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="48.0" layoutX="36.0" layoutY="404.0" stroke="BLACK" strokeType="INSIDE" width="55.0" />
                   <Rectangle fx:id="leftTimeoutRect" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="42.0" layoutX="38.0" layoutY="407.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
           </children>
